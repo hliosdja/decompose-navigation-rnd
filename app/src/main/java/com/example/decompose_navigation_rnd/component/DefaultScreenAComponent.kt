@@ -6,10 +6,11 @@ import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.router.pages.Pages
 import com.arkivanov.decompose.router.pages.PagesNavigation
 import com.arkivanov.decompose.router.pages.childPages
-import com.arkivanov.decompose.router.pages.navigate
 import com.arkivanov.decompose.router.pages.select
+import com.arkivanov.decompose.router.pages.selectFirst
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.doOnResume
 import com.example.decompose_navigation_rnd.component.page_component.EmailInputComponent
 import com.example.decompose_navigation_rnd.component.page_component.JobInputComponent
 import com.example.decompose_navigation_rnd.component.page_component.NameInputComponent
@@ -22,14 +23,13 @@ class DefaultScreenAComponent(
     private val onComplete: (UserData) -> Unit,
 ): ScreenAComponent, ComponentContext by componentContext {
 
-
     private val _consolidatedUserData = MutableValue(UserData())
 
     private val pageNavigation = PagesNavigation<PageConfig>()
 
     init {
-        pageNavigation.navigate { pages ->
-            pages.copy(selectedIndex = 0)
+        lifecycle.doOnResume {
+            _consolidatedUserData.value = UserData()
         }
     }
 
@@ -102,6 +102,7 @@ class DefaultScreenAComponent(
             pageNavigation.select(currentIndex + 1)
         } else {
             onComplete(_consolidatedUserData.value)
+            pageNavigation.selectFirst()
         }
     }
 
